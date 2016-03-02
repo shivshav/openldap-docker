@@ -14,12 +14,6 @@ PHPLDAPADMIN_NAME=${6:-phpldapadmin}
 PHPLDAP_IMAGE_NAME=${7:-osixia/phpldapadmin}
 PHPLDAP_LDAP_HOSTS=${PHPLDAP_LDAP_HOSTS:-openldap}
 
-#BASE_LDIF=base.ldif
-#
-#ADD_TO_GROUPS_SCRIPT=add-users-to-initial-groups.sh
-
-echo "LDAP_IMAGE_NAME is ${LDAP_IMAGE_NAME}"
-
 #Convert FQDN to LDAP base DN
 SLAPD_TMP_DN=".${SLAPD_DOMAIN}"
 while [ -n "${SLAPD_TMP_DN}" ]; do
@@ -34,11 +28,6 @@ docker run \
 --entrypoint="echo" \
 ${LDAP_IMAGE_NAME} \
 "Create OpenLDAP volume."
-
-##Create base.ldif
-#sed -e "s/{SLAPD_DN}/${SLAPD_DN}/g" ${BASEDIR}/${BASE_LDIF}.template > ${BASEDIR}/${BASE_LDIF}
-#sed -i "s/{ADMIN_UID}/${CI_ADMIN_UID}/g" ${BASEDIR}/${BASE_LDIF}
-#sed -i "s/{ADMIN_EMAIL}/${CI_ADMIN_EMAIL}/g" ${BASEDIR}/${BASE_LDIF}
 
 #Start openldap
 docker run \
@@ -59,28 +48,3 @@ docker run \
 -e PHPLDAPADMIN_LDAP_HOSTS=${PHPLDAP_LDAP_HOSTS} \
 -e PHPLDAPADMIN_HTTPS=false \
 -d ${PHPLDAP_IMAGE_NAME}
-
-
-#while [ -z "$(docker logs ${LDAP_NAME} 2>&1 | tail -n 4 | grep 'slapd starting')" ]; do
-#    echo "Waiting openldap ready."
-#    sleep 1
-#done
-#
-##Import accounts
-#docker exec openldap \
-#ldapadd -f /${BASE_LDIF} -x -D "cn=admin,${SLAPD_DN}" -w ${SLAPD_PASSWORD}
-#
-### Setup CI Admin user's password
-#docker exec openldap \
-#ldappasswd -x -D "cn=admin,${SLAPD_DN}" -w ${SLAPD_PASSWORD} -s ${CI_ADMIN_PWD} \
-#"uid=${CI_ADMIN_UID},ou=accounts,${SLAPD_DN}"
-#
-### Test User Account
-#docker exec openldap \
-#ldappasswd -x -D "cn=admin,${SLAPD_DN}" -w ${SLAPD_PASSWORD} -s testpass \
-#"uid=testuser,ou=accounts,${SLAPD_DN}"
-#
-## Add testuser to developers group for testing
-#echo "Adding users to initial groups"
-#docker cp ${BASEDIR}/${ADD_TO_GROUPS_SCRIPT} openldap:/ # Copy over modify script since it can't be executed 
-#docker exec openldap /${ADD_TO_GROUPS_SCRIPT}
