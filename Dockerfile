@@ -1,8 +1,14 @@
-FROM dinkel/openldap
+FROM openfrontier/openldap
 
-MAINTAINER mzp <qiuranke@gmail.com>
+MAINTAINER shiv <shiv@demo.com>
 
-RUN apt-get update && apt-get install -y ldap-utils \
-    && apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+ENV CI_ADMIN_UID admin
+ENV CI_ADMIN_PWD passwd
 
+COPY base.ldif.template /base.ldif.template
+COPY first_run.sh /first_run.sh
+COPY start.sh /start.sh
+
+RUN chmod +x ./start.sh ./first_run.sh
+
+CMD ["/start.sh"]
