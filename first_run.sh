@@ -1,7 +1,6 @@
 #!/bin/bash
 
 BASE_LDIF=base.ldif
-CI_ADMIN_EMAIL=${CI_ADMIN_UID}@${SLAPD_DOMAIN}
 
 #Convert FQDN to LDAP base DN
 SLAPD_TMP_DN=".${SLAPD_DOMAIN}"
@@ -15,6 +14,7 @@ SLAPD_DN="${SLAPD_DN#,}"
 sed -e "s/{SLAPD_DN}/${SLAPD_DN}/g" /${BASE_LDIF}.template > /${BASE_LDIF}
 sed -i "s/{ADMIN_UID}/${CI_ADMIN_UID}/g" /${BASE_LDIF}
 sed -i "s/{ADMIN_EMAIL}/${CI_ADMIN_EMAIL}/g" /${BASE_LDIF}
+sed -i "s/{SLAPD_DOMAIN}/${SLAPD_DOMAIN}/g" /${BASE_LDIF}
 
 # Short waits to prevent errors
 while [ ! -f /var/log/ldap.log ]; do

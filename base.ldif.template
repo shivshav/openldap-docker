@@ -55,4 +55,4 @@ displayName: test user
 uidNumber: 10001
 sn: user
 givenName: test
-mail: testuser@example.com
+mail: testuser@{SLAPD_DOMAIN}
