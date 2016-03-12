@@ -4,11 +4,8 @@ MAINTAINER shiv <shiv@demo.com>
 
 ENV CI_ADMIN_UID admin
 ENV CI_ADMIN_PWD passwd
+ENV CI_ADMIN_EMAIL admin@demo.com
 
-COPY base.ldif.template /base.ldif.template
-COPY first_run.sh /first_run.sh
-COPY start.sh /start.sh
-
-RUN chmod +x ./start.sh ./first_run.sh
+COPY base.ldif.template first_run.sh start.sh /
 
 CMD ["/start.sh"]
